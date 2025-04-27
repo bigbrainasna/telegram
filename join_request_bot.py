@@ -19,13 +19,15 @@ async def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
     application.add_handler(ChatJoinRequestHandler(handle_join_request))
 
-    # Use the correct method for polling
-    await application.run_polling()  # Changed from start_polling() to run_polling()
+    # Use run_polling() without asyncio.run
+    await application.run_polling()
 
     # Optionally, you can add idle to keep the bot running
     await application.idle()
 
+# Directly call the main function without asyncio.run()
 if __name__ == '__main__':
     import asyncio
-    asyncio.run(main())
+    loop = asyncio.get_event_loop()  # Get the current event loop
+    loop.run_until_complete(main())  # Run the main function in the existing loop
 
