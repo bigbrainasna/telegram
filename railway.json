@@ -1,0 +1,8 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python join_request_bot.py"
+  }
+}
