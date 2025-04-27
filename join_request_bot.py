@@ -1,19 +1,28 @@
+import os
 import asyncio
 from telegram import Update
-from telegram.ext import Application, CommandHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, ChatJoinRequestHandler, ContextTypes
 
-TOKEN = "YOUR_BOT_TOKEN"
+BOT_TOKEN = os.environ['BOT_TOKEN']
+ADMIN_USERNAME = os.environ['ADMIN_USERNAME']
 
 async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.message.from_user
-    await update.message.reply_text(f"Hello {user.first_name}! Your join request has been received.")
+    user = update.chat_join_request.from_user
+    try:
+        await context.bot.send_message(
+            chat_id=user.id,
+            text=f"Hi {user.first_name}! Please message @{ADMIN_USERNAME} to complete verification to join the group."
+        )
+    except Exception as e:
+        print(f"Failed to message {user.username}: {e}")
 
-async def main():
-    application = Application.builder().token(TOKEN).build()
+def run_bot():
+    """Run the bot synchronously for Railway compatibility"""
+    application = ApplicationBuilder().token(BOT_TOKEN).build()
+    application.add_handler(ChatJoinRequestHandler(handle_join_request))
     
-    application.add_handler(MessageHandler(Filters.all, handle_join_request))
-    
-    await application.run_polling()
+    # This will handle the event loop internally
+    application.run_polling()
 
-if __name__ == "__main__":
-    asyncio.run(main())  # This is the correct way to run async code
+if __name__ == '__main__':
+    run_bot()  # Simplified entry point
