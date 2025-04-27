@@ -18,9 +18,14 @@ async def handle_join_request(update: Update, context: ContextTypes.DEFAULT_TYPE
 async def main():
     application = ApplicationBuilder().token(BOT_TOKEN).build()
     application.add_handler(ChatJoinRequestHandler(handle_join_request))
-    await application.start_polling()
+
+    # Use the correct method for polling
+    await application.run_polling()  # Changed from start_polling() to run_polling()
+
+    # Optionally, you can add idle to keep the bot running
     await application.idle()
 
 if __name__ == '__main__':
     import asyncio
     asyncio.run(main())
+
